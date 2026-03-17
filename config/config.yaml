@@ -1,0 +1,8 @@
+input_files:
+  beta0: "mhc2.ipsc.krab.mixture_model.mean_exp_beta0.txt"
+  dispersion: "ipsc.krab.expect_cells.mle.thetas.txt"
+
+interpolation:
+  enabled: true
+  num_points: 5
+  range_override: [-6, -2]
