@@ -35,7 +35,7 @@ Rscript scripts/01_prepare_input.R
 2. **Compile simulation parameter grid**
 ```
 
-Rscript scripts/02_compile_parameters.R
+Rscript scripts/02_build_parameter_grid.R
 
 ```
 

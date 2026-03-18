@@ -1,8 +1,50 @@
+# Input files placed in data/raw/
 input_files:
   beta0: "mhc2.ipsc.krab.mixture_model.mean_exp_beta0.txt"
   dispersion: "ipsc.krab.expect_cells.mle.thetas.txt"
+  counts: "mhc2.ipsc.krab.ncells_per_grna.txt"
 
+# Optional gene subset used only when interpolation is not used
+gene_list_file: "gene_list.txt"
+
+# Interpolation settings for preprocessing
 interpolation:
-  enabled: true
+  use_interpolated: true
   num_points: 5
   range_override: [-6, -2]
+
+# Simulation design parameters
+parameters:
+  n_values: [20]
+
+  exp_beta1:
+    min: 0.1
+    max: 1.0
+    step: 0.025
+    include_reciprocals: true
+
+  # Standard deviation of beta1 draws on the log scale
+  beta1_sd_values: [0]
+
+  lbar_values: [300]
+
+  # Number of active guides among n total guides
+  q_values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+
+  # Optional alternative to q_values; set to null when q_values are used
+  prop_values: null
+
+  alpha: 0.05
+
+  # If 0 < k_value < 1, set k = ceiling(k_value * n).
+  # If k_value >= 1, set k = as.integer(k_value).
+  k_value: 0.3
+
+simulation:
+  nsim: 1000000
+  nsim2: 100000
+  nsim2_divisions: 1
+  seed: 42
+
+alt_simulation:
+  use_count_based: false
