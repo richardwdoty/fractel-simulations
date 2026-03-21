@@ -16,6 +16,11 @@
 # Outputs (data/processed/):
 #   - formatted_parameters.tsv
 #   - interpolated_parameters.tsv (if enabled)
+#
+# NOTE:
+# Dispersion is expected in the parameterization:
+#   Var[Y] = mu + phi * mu^2
+# If input provides theta (NB size), we convert via phi = 1 / theta.
 
 suppressMessages({
   library(dplyr)
@@ -41,14 +46,20 @@ dispersion_data <- read.table(dispersion_path, header = TRUE, sep = "\t")
 
 # ---- Validate columns ----
 required_beta0_cols <- c("gene", "mean_exp_beta0")
-required_disp_cols <- c("gene", "theta")
 
 if (!all(required_beta0_cols %in% colnames(beta0_data))) {
   stop("beta0 file must contain columns: gene, mean_exp_beta0")
 }
 
-if (!all(required_disp_cols %in% colnames(dispersion_data))) {
-  stop("dispersion file must contain columns: gene, theta")
+has_theta <- "theta" %in% colnames(dispersion_data)
+has_phi   <- "phi"   %in% colnames(dispersion_data)
+
+if (!(has_theta || has_phi)) {
+  stop("dispersion file must contain either 'theta' or 'phi' column.")
+}
+
+if (has_theta && has_phi) {
+  stop("dispersion file must contain only one of 'theta' or 'phi', not both.")
 }
 
 # ---- Validate values ----
@@ -56,8 +67,12 @@ if (any(beta0_data$mean_exp_beta0 <= 0)) {
   stop("mean_exp_beta0 must be strictly positive.")
 }
 
-if (any(dispersion_data$theta <= 0)) {
+if (has_theta && any(dispersion_data$theta <= 0)) {
   stop("theta must be strictly positive.")
+}
+
+if (has_phi && any(dispersion_data$phi <= 0)) {
+  stop("phi must be strictly positive.")
 }
 
 # ---- Check duplicates ----
@@ -69,8 +84,10 @@ if (any(duplicated(dispersion_data$gene))) {
   stop("Duplicate gene entries found in dispersion file.")
 }
 
-# ---- Convert dispersion: theta -> phi ----
-dispersion_data$phi <- 1 / dispersion_data$theta
+# ---- Convert dispersion to phi ----
+if (has_theta) {
+  dispersion_data$phi <- 1 / dispersion_data$theta
+}
 
 # ---- Merge ----
 merged_data <- merge(beta0_data, dispersion_data, by = "gene")
