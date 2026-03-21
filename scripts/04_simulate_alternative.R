@@ -216,10 +216,9 @@ power_by_rank <- vapply(
 result_df <- data.frame(
   task_id = task_id,
   gene = gene_label,
-  rank = seq_len(n_guides),
+  k = seq_len(n_guides),
   power = power_by_rank,
   n = n_guides,
-  k = k_bound,
   q = q_active,
   prop = prop_active,
   lbar = lbar,
