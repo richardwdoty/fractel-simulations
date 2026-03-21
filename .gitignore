@@ -49,5 +49,12 @@ po/*~
 rsconnect/
 
 # Project data files
-data/
-results/
+data/processed/*.tsv
+data/processed/*.gz
+data/processed/null/*.gz
+data/raw/*.txt
+data/raw/*.tsv
+data/raw/*.gz
+
+results/alternative/*.tsv
+results/alternative/by_task/*.tsv
